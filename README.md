@@ -6,7 +6,7 @@ Run clang-format from your CI to automatically suggest style changes in PRs as i
 
 This script requires `clang-format` and `git clang-format`.
 
-Example installation script:
+Example installation script using a pre-built clang-format binary:
 
 ```bash
 CLANG_FORMAT_VERSION="r343360"

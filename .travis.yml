@@ -10,5 +10,11 @@ matrix:
   include:
   - osx_image: xcode9
   - osx_image: xcode10
+before_install:
+  - brew install clang-format
+  - mkdir bin
+  - curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/$GIT_CLANG_FORMAT_VERSION/tools/clang-format/git-clang-format" -o "bin/git-clang-format"
+  - chmod +x bin/git-clang-format
+  - export PATH="$(pwd)/bin:$PATH"
 script:
-- check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"
+  - check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"
