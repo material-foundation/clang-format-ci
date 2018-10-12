@@ -11,20 +11,34 @@ This script requires `clang-format` and `git clang-format`.
 This script is intended to be invoked from a continuous integration service that supports running
 arbitrary scripts.
 
-Example continuous integration script:
+### Travis CI
 
-```bash
-git clone https://github.com/material-foundation/clang-format-ci.git
-cd clang-format-ci
-./check-pull-request.sh \
-  --api_token <token> \
-  --repo material-components/material-components-ios \
-  --pr 123 \
-  --commit <sha> \
-  --target_branch origin/develop
+You will likely want to set up your GitHub API token as an
+[encrypted environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-encrypted-variables-in-travisyml).
+You can then use the following `.travis.yml`, being sure to fill in the TODOs:
+
 ```
-
-## Typical CI variable mapping
+language: objective-c
+sudo: false
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  matrix:
+    secure: # TODO: Configure $GITHUB_TOKEN as a secure environment variable
+matrix:
+  include:
+  - osx_image: xcode10
+before_install:
+  - brew install clang-format
+  - mkdir bin
+  - curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/c510fac5695e904b43d5bf0feee31cc9550f110e/tools/clang-format/git-clang-format" -o "bin/git-clang-format"
+  - chmod +x bin/git-clang-format
+  - export PATH="$(pwd)/bin:$PATH"
+  - git clone --branch <TODO: version> https://github.com/material-foundation/clang-format-ci.git
+script:
+  - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./clang-format-ci/check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
+```
 
 ### Kokoro
 
@@ -81,32 +95,3 @@ git clone --branch <TODO: version> https://github.com/material-foundation/clang-
   --target_branch "$KOKORO_GITHUB_PULL_REQUEST_TARGET_BRANCH"
 ```
 
-
-### Travis CI
-
-You will likely want to set up your GitHub API token as an
-[encrypted environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-encrypted-variables-in-travisyml).
-You can then use the following `.travis.yml`, being sure to fill in the TODOs:
-
-```
-language: objective-c
-sudo: false
-env:
-  global:
-  - LC_CTYPE=en_US.UTF-8
-  - LANG=en_US.UTF-8
-  matrix:
-    secure: # TODO: Configure $GITHUB_TOKEN as a secure environment variable
-matrix:
-  include:
-  - osx_image: xcode10
-before_install:
-  - brew install clang-format
-  - mkdir bin
-  - curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/c510fac5695e904b43d5bf0feee31cc9550f110e/tools/clang-format/git-clang-format" -o "bin/git-clang-format"
-  - chmod +x bin/git-clang-format
-  - export PATH="$(pwd)/bin:$PATH"
-  - git clone --branch <TODO: version> https://github.com/material-foundation/clang-format-ci.git
-script:
-  - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./clang-format-ci/check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
-```
