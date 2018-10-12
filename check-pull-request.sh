@@ -63,7 +63,7 @@ suggest_diff_changes() {
 
   echo "Posting results to GitHub..."
 
-  pushd scripts/github-comment >> /dev/null
+  pushd github-comment >> /dev/null
 
   swift run github-comment \
     --repo="$REPO" \
@@ -97,7 +97,7 @@ EOL
 }
 
 delete_comment() {
-  pushd scripts/github-comment >> /dev/null
+  pushd github-comment >> /dev/null
   # No recommended changes, so delete any existing comment
   swift run github-comment \
     --repo="$REPO" \
