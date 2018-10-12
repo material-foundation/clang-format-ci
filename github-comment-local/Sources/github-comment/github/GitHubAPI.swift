@@ -169,6 +169,7 @@ extension GitHub {
         request.httpBody = try JSONSerialization.data(withJSONObject: json, options: [])
       } catch {
         print("Failed to encode json.")
+        print(json)
         exit(103)
       }
     }
@@ -183,6 +184,7 @@ extension GitHub {
       }
     } else {
       print("mutate failed")
+      print(json)
       print(results)
       if let error = results.error {
         print("Error: \(error.localizedDescription)")
