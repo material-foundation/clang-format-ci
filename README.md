@@ -86,13 +86,27 @@ be defined as environment variables in your Kokoro configuration.
 ### Travis CI
 
 You will likely want to set up your GitHub API token as an
-[encrypted environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-encrypted-variables-in-travisyml). You can then use the following invocation:
+[encrypted environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-encrypted-variables-in-travisyml).
+You can then use the following `.travis.yml`:
 
 ```
-./check-pull-request.sh \
-  --api_token "$API_TOKEN" \
-  --repo "$TRAVIS_PULL_REQUEST_SLUG" \
-  --pr "$TRAVIS_PULL_REQUEST" \
-  --commit "$TRAVIS_PULL_REQUEST_SHA" \
-  --target_branch "$TRAVIS_BRANCH"
+language: objective-c
+sudo: false
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  matrix:
+    secure: # TODO: Configure $GITHUB_TOKEN as a secure environment variable
+matrix:
+  include:
+  - osx_image: xcode10
+before_install:
+  - brew install clang-format
+  - mkdir bin
+  - curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/c510fac5695e904b43d5bf0feee31cc9550f110e/tools/clang-format/git-clang-format" -o "bin/git-clang-format"
+  - chmod +x bin/git-clang-format
+  - export PATH="$(pwd)/bin:$PATH"
+script:
+  - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
 ```
