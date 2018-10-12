@@ -6,6 +6,31 @@ Run clang-format from your CI to automatically suggest style changes in PRs as i
 
 This script requires `clang-format` and `git clang-format`.
 
+## Usage
+
+This script is intended to be invoked from a continuous integration service that supports running
+arbitrary scripts.
+
+Example continuous integration script:
+
+```bash
+git clone https://github.com/material-foundation/clang-format-ci.git
+cd clang-format-ci
+./check-pull-request.sh \
+  --api_token <token> \
+  --repo material-components/material-components-ios \
+  --pr 123 \
+  --commit <sha> \
+  --target_branch origin/develop
+```
+
+## Typical CI variable mapping
+
+### Kokoro
+
+You will need to provide both an API token and repo name to the script. Both of these values should
+be defined as environment variables in your Kokoro configuration.
+
 Example installation script using a pre-built clang-format binary:
 
 ```bash
@@ -46,35 +71,9 @@ install_clang_format() {
 if ! git clang-format -h > /dev/null 2> /dev/null; then
   install_clang_format
 fi
-```
 
-## Usage
-
-This script is intended to be invoked from a continuous integration service that supports running
-arbitrary scripts.
-
-Example continuous integration script:
-
-```bash
-git clone https://github.com/material-foundation/clang-format-ci.git
-cd clang-format-ci
-./check-pull-request.sh \
-  --api_token <token> \
-  --repo material-components/material-components-ios \
-  --pr 123 \
-  --commit <sha> \
-  --target_branch origin/develop
-```
-
-## Typical CI variable mapping
-
-### Kokoro
-
-You will need to provide both an API token and repo name to the script. Both of these values should
-be defined as environment variables in your Kokoro configuration.
-
-```
-./check-pull-request.sh \
+git clone --branch <TODO: version> https://github.com/material-foundation/clang-format-ci.git
+./clang-format-ci/check-pull-request.sh \
   --api_token "$API_TOKEN" \
   --repo "$REPO" \
   --pr "$KOKORO_GITHUB_PULL_REQUEST_NUMBER" \
@@ -87,7 +86,7 @@ be defined as environment variables in your Kokoro configuration.
 
 You will likely want to set up your GitHub API token as an
 [encrypted environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-encrypted-variables-in-travisyml).
-You can then use the following `.travis.yml`:
+You can then use the following `.travis.yml`, being sure to fill in the TODOs:
 
 ```
 language: objective-c
@@ -107,6 +106,7 @@ before_install:
   - curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/c510fac5695e904b43d5bf0feee31cc9550f110e/tools/clang-format/git-clang-format" -o "bin/git-clang-format"
   - chmod +x bin/git-clang-format
   - export PATH="$(pwd)/bin:$PATH"
+  - git clone --branch <TODO: version> https://github.com/material-foundation/clang-format-ci.git
 script:
-  - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
+  - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./clang-format-ci/check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
 ```
