@@ -63,13 +63,13 @@ suggest_diff_changes() {
 
   echo "Posting results to GitHub..."
 
-  pushd github-comment-local >> /dev/null
+  pushd github-comment >> /dev/null
 
   swift run github-comment \
     --repo="$REPO" \
     --github_token="$API_TOKEN" \
     --pull_request_number="$PULL_REQUEST" \
-    --commit="$KOKORO_GITHUB_PULL_REQUEST_COMMIT" \
+    --commit="$COMMIT" \
     --identifier=clang-format \
     --comment_body="$COMMENT_TMP_FILE" \
     --diff="$DIFF_TMP_FILE"
@@ -97,7 +97,7 @@ EOL
 }
 
 delete_comment() {
-  pushd github-comment-local >> /dev/null
+  pushd github-comment >> /dev/null
   # No recommended changes, so delete any existing comment
   swift run github-comment \
     --repo="$REPO" \
