@@ -16,4 +16,5 @@ before_install:
   - chmod +x bin/git-clang-format
   - export PATH="$(pwd)/bin:$PATH"
 script:
+  echo --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"
   - if [ -n "$TRAVIS_PULL_REQUEST_SLUG" ]; then ./check-pull-request.sh --api_token "$GITHUB_TOKEN" --repo "$TRAVIS_PULL_REQUEST_SLUG" --pr "$TRAVIS_PULL_REQUEST" --commit "$TRAVIS_PULL_REQUEST_SHA" --target_branch "$TRAVIS_BRANCH"; fi
