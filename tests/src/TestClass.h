@@ -20,6 +20,6 @@
  Adds a foo.jas dkflasjf lasfjldsaf jadslkfjdsa klfjaslkf dsajlfkj aflkajsf laksfjas lkfjsaf
  laksjflk afjadls jflksdjf
  */
-- (void)addFoo:(nonnull NSNumber *)foo;
+- (void)addFoo    :(nonnull NSNumber *     )foo;
 
 @end
