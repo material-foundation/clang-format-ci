@@ -17,6 +17,8 @@
 # Fail on any error.
 set -e
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+
 usage() {
   echo "Usage: $0"
   echo
@@ -63,7 +65,7 @@ suggest_diff_changes() {
 
   echo "Posting results to GitHub..."
 
-  pushd github-comment >> /dev/null
+  pushd "$DIR/github-comment" >> /dev/null
 
   swift run github-comment \
     --repo="$REPO" \
@@ -97,7 +99,7 @@ EOL
 }
 
 delete_comment() {
-  pushd github-comment >> /dev/null
+  pushd "$DIR/github-comment" >> /dev/null
   # No recommended changes, so delete any existing comment
   swift run github-comment \
     --repo="$REPO" \
