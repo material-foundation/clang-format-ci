@@ -127,7 +127,13 @@ main() {
     exit 1
   fi
 
-  base_sha=$(git merge-base "$TARGET_BRANCH" HEAD)
+  # If the target branch doesn't exist locally, it likely exists upstream.
+  if [ $(git branch --list "$TARGET_BRANCH") ]; then
+    base_sha=$(git merge-base "$TARGET_BRANCH" HEAD)
+  else
+    base_sha="HEAD^"
+  fi
+
   echo "Running clang-format on changes from $base_sha to HEAD..."
   git clang-format "$base_sha"
 
