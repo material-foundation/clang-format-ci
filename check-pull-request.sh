@@ -117,7 +117,7 @@ main() {
     exit 1
   fi
 
-  if [ ! -f "github-comment/README.md" ]; then
+  if [ ! -f "$DIR/github-comment/README.md" ]; then
     git submodule update --init --recursive
   fi
 
