@@ -129,7 +129,8 @@ main() {
 
   # If the target branch doesn't exist locally, it likely exists upstream.
   if [ ! $(git branch --list "$TARGET_BRANCH") ]; then
-    git remote -v
+    git fetch origin
+    git branch -a
     git branch --track "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
   fi
 
