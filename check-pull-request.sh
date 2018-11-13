@@ -131,6 +131,7 @@ main() {
   if [ ! $(git branch --list "$TARGET_BRANCH") ]; then
     git fetch origin
     git branch -a
+    git log
     git branch --track "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
   fi
 
