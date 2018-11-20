@@ -19,6 +19,12 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
+# The tagged version of https://github.com/material-foundation/github-comment to check out.
+# A * wildcard can be used to check out the latest release of a given version.
+GITHUB_COMMENT_VERSION="v1.*"
+
+GITHUB_COMMENT_SRC_DIR="$DIR/.github-comment"
+
 usage() {
   echo "Usage: $0"
   echo
@@ -65,7 +71,7 @@ suggest_diff_changes() {
 
   echo "Posting results to GitHub..."
 
-  pushd "$DIR/github-comment" >> /dev/null
+  pushd "$GITHUB_COMMENT_SRC_DIR" >> /dev/null
 
   swift run github-comment \
     --repo="$REPO" \
@@ -99,7 +105,7 @@ EOL
 }
 
 delete_comment() {
-  pushd "$DIR/github-comment" >> /dev/null
+  pushd "$GITHUB_COMMENT_SRC_DIR" >> /dev/null
   # No recommended changes, so delete any existing comment
   swift run github-comment \
     --repo="$REPO" \
@@ -117,9 +123,20 @@ main() {
     exit 1
   fi
 
-  if [ ! -f "$DIR/github-comment/README.md" ]; then
-    git submodule update --init --recursive
+  if [ ! -d "$GITHUB_COMMENT_SRC_DIR" ]; then
+    git clone --recurse-submodules https://github.com/material-foundation/github-comment.git "$GITHUB_COMMENT_SRC_DIR"
   fi
+
+  pushd "$GITHUB_COMMENT_SRC_DIR"
+  git fetch > /dev/null
+  TAG=$(git tag --sort=v:refname -l "$GITHUB_COMMENT_VERSION" | tail -n1)
+  if [ -z "$TAG" ]; then
+    echo "No tag matching $GITHUB_COMMENT_VERSION found in https://github.com/material-foundation/github-comment"
+    exit 1
+  fi
+  git checkout "$TAG" > /dev/null
+  echo "Using github-comment $TAG"
+  popd
 
   if ! git clang-format -h > /dev/null 2> /dev/null; then
     echo "git clang-format is not available. Please install clang-format"
