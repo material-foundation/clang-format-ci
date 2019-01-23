@@ -19,6 +19,15 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
+# clang-format releases pulled from https://github.com/material-foundation/clang-format/releases
+CLANG_FORMAT_TAG="r345798"
+CLANG_FORMAT_SHA="7584ce5ff2633d3a38f41cc41906d328d07b0afdda4adb56edb6fef58042d33a"
+
+# git-clang-format commit pulled from 
+# https://github.com/llvm-mirror/clang/blob/master/tools/clang-format/git-clang-format
+GIT_CLANG_FORMAT_COMMIT="c510fac5695e904b43d5bf0feee31cc9550f110e"
+GIT_CLANG_FORMAT_SHA="1f6cfad79f90ea202dcf2d52a360186341a589cdbfdee05b0e7694f912aa9820"
+
 usage() {
   echo "Usage: $0 <repo>"
   echo
@@ -136,8 +145,7 @@ lint_clang_format() {
 
     # Install clang-format
     echo "Downloading clang-format..."
-    CLANG_FORMAT_SHA="7584ce5ff2633d3a38f41cc41906d328d07b0afdda4adb56edb6fef58042d33a"
-    curl -Ls "https://github.com/material-foundation/clang-format/releases/download/r345798/clang-format" -o "clang-format"
+    curl -Ls "https://github.com/material-foundation/clang-format/releases/download/$CLANG_FORMAT_TAG/clang-format" -o "clang-format"
     if openssl sha -sha256 "clang-format" | grep -q "$CLANG_FORMAT_SHA"; then
       echo "SHAs match. Proceeding."
     else
@@ -148,8 +156,7 @@ lint_clang_format() {
 
     echo "Downloading git-clang-format..."
     # Install git-clang-format
-    GIT_CLANG_FORMAT_SHA="1f6cfad79f90ea202dcf2d52a360186341a589cdbfdee05b0e7694f912aa9820"
-    curl -Ls https://raw.githubusercontent.com/llvm-mirror/clang/c510fac5695e904b43d5bf0feee31cc9550f110e/tools/clang-format/git-clang-format -o "git-clang-format"
+    curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/$GIT_CLANG_FORMAT_COMMIT/tools/clang-format/git-clang-format" -o "git-clang-format"
     if openssl sha -sha256 "git-clang-format" | grep -q "$GIT_CLANG_FORMAT_SHA"; then
       echo "SHAs match. Proceeding."
     else
