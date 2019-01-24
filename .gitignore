@@ -1,2 +1,5 @@
 # Local clang-format installation
 bin/
+
+.github-comment
+
