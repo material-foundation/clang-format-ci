@@ -1,7 +1,7 @@
-# #develop#
+# 1.1.0
 
- TODO: Enumerate changes.
-
+This minor release updates clang-format to r351607, includes some minor cleanup to the scripts, and
+removes the need to initialize submodules when cloning the repository.
 
 # 1.0.0
 
