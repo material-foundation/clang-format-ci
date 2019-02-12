@@ -95,3 +95,30 @@ git clone --branch <TODO: version> https://github.com/material-foundation/clang-
   --target_branch "$KOKORO_GITHUB_PULL_REQUEST_TARGET_BRANCH"
 ```
 
+## How to update the clang-format-ci version
+
+First: build and release the clang-format version.
+
+1. Fork and clone https://github.com/material-foundation/clang-format onto a mac machine.
+2. Run `clang-format --version` to identify your local version of clang-format.
+3. Edit the [`REV`](https://github.com/material-foundation/clang-format/blob/develop/build.sh#L20) variable in `build.sh` with the revision number you'd like to build.
+4. Run `build.sh`.
+5. While the build is running, create a pull request with the changes to build.sh.
+6. Get the pull request reviewed and merged in to `develop`.
+7. Once the local build has finished (takes 1hr+), create a draft release named after the clang-format revision number.
+8. Upload the clang-format binary to the release.
+9. Include the generated SHA value in the release notes.
+10. Publish the release.
+
+Second: create a new clang-format-ci release.
+
+1. Fork and clone https://github.com/material-foundation/clang-format-ci onto a mac machine.
+3. Edit the `CLANG_FORMAT_TAG` and `CLANG_FORMAT_SHA` values in [`from-kokoro.sh`](https://github.com/material-foundation/clang-format-ci/blob/develop/from-kokoro.sh#L22-L29) with the tag and sha from the steps above.
+4. Send the changes out as a PR.
+5. Get the pull request reviewed and merged in to `develop`.
+6. Install the [`mdm` toolchain](https://github.com/material-motion/tools#installation). You'll use this to cut the release on clang-format.
+7. Cut the release by running `mdm release cut`.
+8. Update the changelog notes.
+9. Push the release-candidate to GitHub and open an PR for review to stable.
+10. Once the PR is LGTM'd, do not merge it via GitHub. Instead, run `mdm release merge <#version number#>`.
+11. Run `mdm release publish` to publish the release.
