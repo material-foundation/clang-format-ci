@@ -20,8 +20,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
 # clang-format releases pulled from https://github.com/material-foundation/clang-format/releases
-CLANG_FORMAT_TAG="r351607"
-CLANG_FORMAT_SHA="3a8886df1e6647a498c112d55bdd527a321699f6c85583bfe8992ed80836ea58"
+CLANG_FORMAT_TAG="r352957"
+CLANG_FORMAT_SHA="bfd106536cb99207073b0626b41f3fd302ca127773c5a05f24e3daef9ae85d9b"
 
 # git-clang-format commit pulled from 
 # https://github.com/llvm-mirror/clang/blob/master/tools/clang-format/git-clang-format
