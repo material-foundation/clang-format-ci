@@ -1,7 +1,6 @@
-# #develop#
+# 1.2.0
 
- TODO: Enumerate changes.
-
+This minor release updates clang-format to r352957.
 
 # 1.1.0
 
