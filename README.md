@@ -48,50 +48,46 @@ be defined as environment variables in your Kokoro configuration.
 Example installation script using a pre-built clang-format binary:
 
 ```bash
-CLANG_FORMAT_VERSION="r343360"
-CLANG_FORMAT_SHA="9d2a3aeaee65f09ae5405dd33812d167fadd48aba712965cdb3238e5d8837255"
-GIT_CLANG_FORMAT_VERSION="c510fac5695e904b43d5bf0feee31cc9550f110e"
-GIT_CLANG_FORMAT_SHA="1f6cfad79f90ea202dcf2d52a360186341a589cdbfdee05b0e7694f912aa9820"
+# Fail on any error.
+set -e
 
-install_clang_format() {
-  mkdir bin
-  pushd bin >> /dev/null
+REPO="<TODO: Your github repo. E.g. material-foundation/clang-format-ci>"
 
-  echo "Downloading clang-format..."
-  curl -Ls "https://github.com/material-foundation/clang-format/releases/download/$CLANG_FORMAT_VERSION/clang-format" -o "clang-format"
-  if openssl sha -sha256 "clang-format" | grep -q "$CLANG_FORMAT_SHA"; then
-    echo "SHAs match. Proceeding."
-  else
-    echo "clang-format does not match sha. Aborting."
-    exit 1
+# The tagged version of https://github.com/material-foundation/clang-format-ci to check out.
+# A * wildcard can be used to check out the latest release of a given version.
+CLANG_FORMAT_CI_VERSION="v1.*"
+
+CLANG_FORMAT_CI_SRC_DIR=".clang-format-ci-src"
+
+# Will run git clang-format on the branch's changes, reporting a failure if the linter generated any
+# stylistic changes.
+#
+# For local runs, you must set the following environment variables:
+#
+#   GITHUB_API_TOKEN -> Create a token here: https://github.com/settings/tokens.
+#                       Must have public_repo scope.
+#   KOKORO_GITHUB_PULL_REQUEST_NUMBER="###" -> The PR # you want to post the API diff results to.
+#   KOKORO_GITHUB_PULL_REQUEST_COMMIT="..." -> The PR commit you want to post to.
+#
+# And install the following tools:
+#
+# - clang-format
+# - git-clang-format
+lint_clang_format() {
+  if [ ! -d "$CLANG_FORMAT_CI_SRC_DIR" ]; then
+    git clone --recurse-submodules https://github.com/material-foundation/clang-format-ci.git "$CLANG_FORMAT_CI_SRC_DIR"
   fi
-  chmod +x "clang-format"
 
-  echo "Downloading git-clang-format..."
-  curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/$GIT_CLANG_FORMAT_VERSION/tools/clang-format/git-clang-format" -o "git-clang-format"
-  if openssl sha -sha256 "git-clang-format" | grep -q "$GIT_CLANG_FORMAT_SHA"; then
-    echo "SHAs match. Proceeding."
-  else
-    echo "git-clang-format does not match sha. Aborting."
-    exit 1
-  fi
-  chmod +x "git-clang-format"
+  pushd "$CLANG_FORMAT_CI_SRC_DIR"
+  git fetch > /dev/null
+  TAG=$(git tag --sort=v:refname -l "$CLANG_FORMAT_CI_VERSION" | tail -n1)
+  git checkout "$TAG" > /dev/null
+  echo "Using clang-format-ci $TAG"
+  popd
 
-  export PATH="$(pwd):$PATH"
-
-  popd >> /dev/null
+  .clang-format-ci-src/from-kokoro.sh "$REPO"
 }
 
-if ! git clang-format -h > /dev/null 2> /dev/null; then
-  install_clang_format
-fi
-
-git clone --branch <TODO: version> https://github.com/material-foundation/clang-format-ci.git
-./clang-format-ci/check-pull-request.sh \
-  --api_token "$API_TOKEN" \
-  --repo "$REPO" \
-  --pr "$KOKORO_GITHUB_PULL_REQUEST_NUMBER" \
-  --commit "$KOKORO_GITHUB_PULL_REQUEST_COMMIT" \
-  --target_branch "$KOKORO_GITHUB_PULL_REQUEST_TARGET_BRANCH"
+lint_clang_format
 ```
 
