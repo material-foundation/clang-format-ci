@@ -1,3 +1,11 @@
+# 1.2.1
+
+This patch release uses a more explicit invocation to calculate the sha of the clang-format
+binaries. The readme has also been updated to include a more generalizable installation method.
+
+The invocation `openssl sha` appears to have been removed from recent continuous integration
+machines. This release now uses a more explicit `openssl sha256` invocation.
+
 # 1.2.0
 
 This minor release updates clang-format to r352957.
