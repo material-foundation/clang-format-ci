@@ -1,7 +1,7 @@
 # 1.2.1
 
 This patch release uses a more explicit invocation to calculate the sha of the clang-format
-binaries.
+binaries. The readme has also been updated to include a more generalizable installation method.
 
 # 1.2.0
 
