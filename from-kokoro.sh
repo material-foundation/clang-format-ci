@@ -146,7 +146,7 @@ lint_clang_format() {
     # Install clang-format
     echo "Downloading clang-format..."
     curl -Ls "https://github.com/material-foundation/clang-format/releases/download/$CLANG_FORMAT_TAG/clang-format" -o "clang-format"
-    if openssl sha -sha256 "clang-format" | grep -q "$CLANG_FORMAT_SHA"; then
+    if openssl sha256 -sha256 "clang-format" | grep -q "$CLANG_FORMAT_SHA"; then
       echo "SHAs match. Proceeding."
     else
       echo "clang-format does not match sha. Aborting."
@@ -157,7 +157,7 @@ lint_clang_format() {
     echo "Downloading git-clang-format..."
     # Install git-clang-format
     curl -Ls "https://raw.githubusercontent.com/llvm-mirror/clang/$GIT_CLANG_FORMAT_COMMIT/tools/clang-format/git-clang-format" -o "git-clang-format"
-    if openssl sha -sha256 "git-clang-format" | grep -q "$GIT_CLANG_FORMAT_SHA"; then
+    if openssl sha256 -sha256 "git-clang-format" | grep -q "$GIT_CLANG_FORMAT_SHA"; then
       echo "SHAs match. Proceeding."
     else
       echo "git-clang-format does not match sha. Aborting."
