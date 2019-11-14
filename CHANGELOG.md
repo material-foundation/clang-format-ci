@@ -1,7 +1,7 @@
-# #develop#
+# 1.2.1
 
- TODO: Enumerate changes.
-
+This patch release uses a more explicit invocation to calculate the sha of the clang-format
+binaries.
 
 # 1.2.0
 
